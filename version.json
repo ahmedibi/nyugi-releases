@@ -1,0 +1,8 @@
+{
+  "versionCode": 12,
+  "versionName": "1.11",
+  "notes": "Notes now arrive the moment the app is opened, and sooner in the background.",
+  "notesHu": "Az üzenetek azonnal megérkeznek az alkalmazás megnyitásakor.",
+  "apkUrl": "https://raw.githubusercontent.com/ahmedibi/nyugi-releases/main/nyugi-1.11.apk",
+  "sizeBytes": 16273974
+}

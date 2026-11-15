@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nyugi</title>
+<meta name="description" content="Nyugi – emlékeztetők, saját hanggal.">
+<style>
+  :root {
+    --ground: #F1F3EC;
+    --surface: #FFFFFF;
+    --variant: #E4E9DF;
+    --ink: #1B241D;
+    --muted: #596258;
+    --outline: #DCE2D5;
+    --fern: #2F4B39;
+    --on-fern: #F1F3EC;
+    --accent: #C2607F;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #10140F;
+      --surface: #181E18;
+      --variant: #232B23;
+      --ink: #E6EBE2;
+      --muted: #A3AE9F;
+      --outline: #2E382E;
+      --fern: #8FB894;
+      --on-fern: #10140F;
+      --accent: #E08FA6;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #10140F;
+    --surface: #181E18;
+    --variant: #232B23;
+    --ink: #E6EBE2;
+    --muted: #A3AE9F;
+    --outline: #2E382E;
+    --fern: #8FB894;
+    --on-fern: #10140F;
+    --accent: #E08FA6;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100dvh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Leaves, barely there - texture rather than illustration. */
+  .leaves { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .leaves svg { position: absolute; }
+  /* Texture, not illustration: whole enough to read as a leaf, faint enough
+     that you only notice it if you look. */
+  .l1 { top: -30px; left: -46px; width: 185px; opacity: .06; transform: rotate(24deg); }
+  .l2 { bottom: -40px; right: -40px; width: 225px; opacity: .055; transform: rotate(-16deg); }
+  .bloom { top: 26%; right: -26px; width: 104px; opacity: .06; }
+
+  main {
+    position: relative;
+    z-index: 1;
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 56px 16px 72px;
+  }
+
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    font-weight: 400;
+    font-size: clamp(42px, 13vw, 60px);
+    line-height: 1.04;
+    letter-spacing: -.02em;
+    margin: 0 0 30px;
+  }
+
+  .download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 60px;
+    padding: 18px 24px;
+    border: none;
+    border-radius: 18px;
+    background: var(--fern);
+    color: var(--on-fern);
+    font: 600 18px/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    text-decoration: none;
+    box-shadow: 0 10px 26px -12px rgba(26, 40, 30, .55);
+    transition: transform .14s ease, box-shadow .14s ease;
+  }
+  .download:active { transform: scale(.985); box-shadow: 0 6px 16px -10px rgba(26, 40, 30, .5); }
+  .download[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+  .meta {
+    margin: 12px 0 40px;
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 24px;
+    box-shadow: 0 2px 10px -6px rgba(26, 40, 30, .28);
+    margin-bottom: 20px;
+  }
+  .card h2 {
+    font-family: Georgia, "Iowan Old Style", serif;
+    font-weight: 400;
+    font-size: 23px;
+    margin: 0 0 4px;
+  }
+  .card p.hint { margin: 0 0 18px; color: var(--muted); font-size: 15px; }
+
+  ol { margin: 0; padding: 0; list-style: none; counter-reset: step; }
+  ol li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 14px;
+    padding: 11px 0;
+    border-top: 1px solid var(--outline);
+    align-items: start;
+  }
+  ol li:first-child { border-top: none; padding-top: 0; }
+  ol li::before {
+    content: counter(step);
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--variant);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  ol li b { font-weight: 600; }
+
+  .langs { display: flex; gap: 8px; margin-bottom: 28px; }
+  .langs button {
+    flex: 0 0 auto;
+    min-height: 40px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--outline);
+    background: transparent;
+    color: var(--muted);
+    font: 500 14px/1 system-ui, sans-serif;
+    cursor: pointer;
+  }
+  .langs button[aria-pressed="true"] {
+    background: var(--fern);
+    border-color: var(--fern);
+    color: var(--on-fern);
+  }
+
+  .appicon {
+    width: 78px;
+    height: 78px;
+    border-radius: 23%;
+    background: #2C463A;
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 22px -12px rgba(26, 40, 30, .6);
+  }
+  .appicon svg { width: 100%; height: 100%; display: block; }
+
+  footer { color: var(--muted); font-size: 13px; text-align: center; margin-top: 36px; }
+
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="leaves" aria-hidden="true">
+  <svg class="l1" viewBox="0 0 100 220" fill="none"><path d="M50 215C50 215 8 160 8 100C8 46 50 5 50 5C50 5 92 46 92 100C92 160 50 215 50 215Z" fill="currentColor" style="color:var(--fern)"/></svg>
+  <svg class="l2" viewBox="0 0 100 220" fill="none"><path d="M50 215C50 215 8 160 8 100C8 46 50 5 50 5C50 5 92 46 92 100C92 160 50 215 50 215Z" fill="currentColor" style="color:var(--fern)"/></svg>
+  <svg class="bloom" viewBox="0 0 100 100"><g fill="currentColor" style="color:var(--accent)"><ellipse cx="50" cy="26" rx="13" ry="22"/><ellipse cx="50" cy="74" rx="13" ry="22"/><ellipse cx="26" cy="50" rx="22" ry="13"/><ellipse cx="74" cy="50" rx="22" ry="13"/></g></svg>
+</div>
+
+<main>
+  <!-- The launcher icon itself, same geometry as the vector the app ships. -->
+  <div class="appicon" aria-hidden="true">
+    <svg viewBox="18 18 72 72" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(0,3.5)">
+        <ellipse cx="54" cy="70" rx="27" ry="5.4" fill="#3E5C48"/>
+        <path d="M54,34 C62.5,45 62.5,56 54,64 C45.5,56 45.5,45 54,34 Z" fill="#C98096" transform="rotate(-62,54,64)"/>
+        <path d="M54,34 C62.5,45 62.5,56 54,64 C45.5,56 45.5,45 54,34 Z" fill="#C98096" transform="rotate(62,54,64)"/>
+        <path d="M54,27 C63,41 63,54 54,64 C45,54 45,41 54,27 Z" fill="#E3AABA" transform="rotate(-32,54,64)"/>
+        <path d="M54,27 C63,41 63,54 54,64 C45,54 45,41 54,27 Z" fill="#E3AABA" transform="rotate(32,54,64)"/>
+        <path d="M54,25 C63,40 63,54 54,64 C45,54 45,40 54,25 Z" fill="#F6DCE3"/>
+        <ellipse cx="54" cy="57" rx="4.2" ry="3.4" fill="#E8C27E"/>
+      </g>
+    </svg>
+  </div>
+
+  <p class="eyebrow" data-i18n="eyebrow"></p>
+  <h1>Nyugi</h1>
+
+  <a class="download" id="dl" href="#" data-i18n="download"></a>
+  <p class="meta"><span id="meta"></span></p>
+
+  <div class="langs">
+    <button type="button" data-lang="hu" aria-pressed="false">Magyar</button>
+    <button type="button" data-lang="en" aria-pressed="false">English</button>
+  </div>
+
+  <section class="card">
+    <h2 data-i18n="howTitle"></h2>
+    <p class="hint" data-i18n="howHint"></p>
+    <ol>
+      <li><span data-i18n="s1"></span></li>
+      <li><span data-i18n="s2"></span></li>
+      <li><span data-i18n="s3"></span></li>
+      <li><span data-i18n="s4"></span></li>
+    </ol>
+  </section>
+
+  <footer data-i18n="footer"></footer>
+</main>
+
+<script>
+const T = {
+  hu: {
+    eyebrow: "Telepíthető",
+    download: "Letöltés",
+    version: "{v} verzió · {s} · Android 8 vagy újabb",
+    loading: "Verzió betöltése…",
+    offline: "Nem sikerült betölteni a verziót. Frissítsd az oldalt.",
+    howTitle: "Telepítés",
+    howHint: "Első alkalommal négy koppintás. Utána már nem kell ez a lépés.",
+    s1: "Koppints a <b>Letöltés</b> gombra. A fájl a telefon letöltései közé kerül.",
+    s2: "Nyisd meg a letöltött fájlt. Az Android azt írja, hogy ismeretlen helyről nem telepíthet.",
+    s3: "Koppints az <b>Engedélyezés</b> vagy <b>Beállítások</b> lehetőségre, és kapcsold be annál az alkalmazásnál, ahonnan megnyitottad.",
+    s4: "Gyere vissza, és koppints a <b>Telepítés</b> gombra.",
+    footer: "Csak neked készült, szerelmem."
+  },
+  en: {
+    eyebrow: "Ready to install",
+    download: "Download",
+    version: "Version {v} · {s} · Android 8 or newer",
+    loading: "Loading version…",
+    offline: "Could not load the version. Refresh the page.",
+    howTitle: "Installing it",
+    howHint: "Four taps the first time. You will not need this step again.",
+    s1: "Tap <b>Download</b>. The file lands in your phone's downloads.",
+    s2: "Open the downloaded file. Android will say it cannot install from an unknown source.",
+    s3: "Tap <b>Allow</b> or <b>Settings</b> and turn it on for whichever app you opened it from.",
+    s4: "Come back and tap <b>Install</b>.",
+    footer: "Made just for you, my love."
+  }
+};
+
+// Filled from version.json, so this page never needs rebuilding when a new
+// version ships: publishing the APK and the manifest is enough.
+let release = null;
+let current = "hu";
+
+function renderMeta() {
+  const dict = T[current];
+  const meta = document.getElementById("meta");
+  const link = document.getElementById("dl");
+  if (release === null) {
+    meta.textContent = dict.loading;
+    link.setAttribute("aria-disabled", "true");
+    return;
+  }
+  if (release === false) {
+    meta.textContent = dict.offline;
+    link.setAttribute("aria-disabled", "true");
+    return;
+  }
+  const size = release.sizeBytes
+    ? (release.sizeBytes / 1048576).toFixed(1).replace(".", current === "hu" ? "," : ".") + " MB"
+    : "";
+  meta.textContent = dict.version
+    .replace("{v}", release.versionName)
+    .replace("{s}", size)
+    .replace(/ · · /, " · ");
+  link.href = release.apkUrl;
+  link.removeAttribute("aria-disabled");
+}
+
+function apply(lang) {
+  const dict = T[lang];
+  current = lang;
+  document.documentElement.lang = lang;
+  for (const el of document.querySelectorAll("[data-i18n]")) {
+    const value = dict[el.dataset.i18n];
+    if (value !== undefined) el.innerHTML = value;
+  }
+  for (const b of document.querySelectorAll(".langs button")) {
+    b.setAttribute("aria-pressed", String(b.dataset.lang === lang));
+  }
+  renderMeta();
+  try { localStorage.setItem("nyugi-lang", lang); } catch (e) {}
+}
+
+fetch("version.json", { cache: "no-cache" })
+  .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+  .then(function (json) { release = json; renderMeta(); })
+  .catch(function () { release = false; renderMeta(); });
+
+let initial = "hu";
+try {
+  const saved = localStorage.getItem("nyugi-lang");
+  if (saved === "hu" || saved === "en") initial = saved;
+  else if (!(navigator.language || "").toLowerCase().startsWith("hu")) initial = "en";
+} catch (e) {}
+
+for (const b of document.querySelectorAll(".langs button")) {
+  b.addEventListener("click", () => apply(b.dataset.lang));
+}
+apply(initial);
+</script>
+</body>
+</html>
